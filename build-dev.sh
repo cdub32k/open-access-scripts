@@ -1,13 +1,27 @@
 npm run build-dev --prefix open-access-frontend
 mv open-access-frontend/dist/index.html open-access-backend
 
+BUNNY_CDN_STORAGE_ZONE_PWD=bbdfe5a1-2853-488b-9857e9d09f58-d2ae-4331
+
+curl --include \
+     --request DELETE \
+     --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
+'https://storage.bunnycdn.com/open-access-dev/app/'
+
+curl --include \
+     --request DELETE \
+     --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
+'https://storage.bunnycdn.com/open-access-dev/assets/'
+
 for file in open-access-frontend/dist/*
 do
-curl --data "@$file" \
-     --include \
-     --request PUT \
-     --header "AccessKey: bbdfe5a1-2853-488b-9857e9d09f58-d2ae-4331" \
-  "https://storage.bunnycdn.com/open-access-dev/$(basename $file)"
+  if [ ! -d "$file" ]; then
+  curl --data "@$file" \
+      --include \
+      --request PUT \
+      --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
+    "https://storage.bunnycdn.com/open-access-dev/app/$(basename $file)"
+  fi
 done;
 
 for asset in open-access-frontend/dist/assets/*
@@ -15,7 +29,7 @@ do
 curl --data-binary "@$asset" \
      --include \
      --request PUT \
-     --header "AccessKey: bbdfe5a1-2853-488b-9857e9d09f58-d2ae-4331" \
+     --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
   "https://storage.bunnycdn.com/open-access-dev/assets/$(basename $asset)"
 done;
 
