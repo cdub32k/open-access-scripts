@@ -8,11 +8,6 @@ curl --include \
      --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
 'https://storage.bunnycdn.com/open-access-dev/app/'
 
-curl --include \
-     --request DELETE \
-     --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
-'https://storage.bunnycdn.com/open-access-dev/assets/'
-
 for file in open-access-frontend/dist/*
 do
   if [ ! -d "$file" ]; then
@@ -30,7 +25,7 @@ curl --data-binary "@$asset" \
      --include \
      --request PUT \
      --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
-  "https://storage.bunnycdn.com/open-access-dev/assets/$(basename $asset)"
+  "https://storage.bunnycdn.com/open-access-dev/app/assets/$(basename $asset)"
 done;
 
 git --git-dir=./open-access-backend/.git --work-tree=./open-access-backend checkout dev 
