@@ -1,32 +1,9 @@
 npm run build --prefix open-access-frontend
 mv open-access-frontend/dist/index.html open-access-backend
 
-BUNNY_CDN_STORAGE_ZONE_PWD=58ea1fae-6172-47cf-9ccbca7facc3-4177-4049
-
-curl --include \
-     --request DELETE \
-     --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
-'https://ny.storage.bunnycdn.com/open-access-dev/app/'
-
-for file in open-access-frontend/dist/*
-do
-  if [ ! -d "$file" ]; then
-  curl --data "@$file" \
-      --include \
-      --request PUT \
-      --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
-    "https://ny.storage.bunnycdn.com/open-access-assets/app/$(basename $file)"
-  fi
-done;
-
-for asset in open-access-frontend/dist/assets/*
-do
-curl --data-binary "@$asset" \
-     --include \
-     --request PUT \
-     --header "AccessKey: $BUNNY_CDN_STORAGE_ZONE_PWD" \
-  "https://ny.storage.bunnycdn.com/open-access-assets/app/assets/$(basename $asset)"
-done;
+aws s3 sync ./open-access-frontend/dist s3://open-access-dev/app --acl "public-read" --exclude "*" --include "*.js" --content-encoding gzip
+aws s3 sync ./open-access-frontend/dist s3://open-access-dev/app --acl "public-read" --exclude "*" --include "*.css" --content-encoding gzip
+aws s3 sync ./open-access-frontend/dist/assets s3://open-access-dev/app/assets --acl "public-read"
 
 git --git-dir=./open-access-backend/.git --work-tree=./open-access-backend checkout master 
 git --git-dir=./open-access-backend/.git --work-tree=./open-access-backend add index.html
