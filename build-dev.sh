@@ -3,6 +3,7 @@ mv open-access-frontend/dist/index.html open-access-backend
 
 aws s3 sync ./open-access-frontend/dist s3://open-access-dev/app --acl "public-read" --exclude "*" --include "*.js" --content-encoding gzip
 aws s3 sync ./open-access-frontend/dist s3://open-access-dev/app --acl "public-read" --exclude "*" --include "*.css" --content-encoding gzip
+aws s3 sync ./open-access-frontend/dist s3://open-access-dev/app --acl "public-read" --exclude "*" --include "favicon.ico"
 aws s3 sync ./open-access-frontend/dist/assets s3://open-access-dev/app/assets --acl "public-read"
 
 git --git-dir=./open-access-backend/.git --work-tree=./open-access-backend checkout dev 
